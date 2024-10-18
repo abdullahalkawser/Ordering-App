@@ -30,13 +30,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Tab One',
+          // headerShown:false,
           tabBarIcon: ({ color }) => <TabBarIcon name="cutlery" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/Cart" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="shopping-cart"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
