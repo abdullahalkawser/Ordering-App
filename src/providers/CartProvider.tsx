@@ -7,6 +7,7 @@ type CartType = {
   items: CartItem[];
   addItem: (product: Product, size: CartItem['size']) => void;
   updateQuantity: (itemid: string, amount: -1 | 1) => void;
+  total: number;
 };
 
 // Default value for the context
@@ -14,6 +15,7 @@ const CartContext = createContext<CartType>({
   items: [],
   addItem: () => {},
   updateQuantity: () => {},
+  total: 0,
 });
 
 // Create the CartProvider component
@@ -60,12 +62,19 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
+  // Calculate the total price of the items in the cart
+  const total = cartItems.reduce(
+    (sum, item) => (sum += item.product.price * item.quantity),
+    0
+  );
+
   return (
     <CartContext.Provider
       value={{
         items: cartItems,
         addItem: addItemToCart,
         updateQuantity,
+        total, // Include the total in the context value
       }}
     >
       {children}
