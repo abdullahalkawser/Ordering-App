@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useSegments } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 
 type Product = {
@@ -9,8 +9,10 @@ type Product = {
 };
 
 export default function FoodCard({ item }: { item: Product }) {
+  const segument = useSegments()
+  // console.log(segument)
   return (
-    <Link href={`/menu/${item.id}`} asChild>
+    <Link href={`/${segument[0]}/menu/${item.id}`} asChild>
     <Pressable className="flex-1 p-4 bg-slate-50 rounded-2xl shadow-xl w-1/2">
       <Image
         source={{ uri: item.image }}
