@@ -10,7 +10,7 @@ type Product = {
 
 export default function FoodCard({ item }: { item: Product }) {
   return (
-    <Link href={`/${item.id}`} asChild>
+    <Link href={`/menu/${item.id}`} asChild>
     <Pressable className="flex-1 p-4 bg-slate-50 rounded-2xl shadow-xl w-1/2">
       <Image
         source={{ uri: item.image }}

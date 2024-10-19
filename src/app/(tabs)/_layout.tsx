@@ -26,26 +26,14 @@ export default function TabLayout() {
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
       }}>
+        <Tabs.Screen name='index' options={{href: null}}/>
       <Tabs.Screen
-        name="index"
+        name="menu"
         options={{
-          title: 'Tab One',
-          // headerShown:false,
+          title: 'Menu',
+          headerShown:false,
           tabBarIcon: ({ color }) => <TabBarIcon name="cutlery" color={color} />,
-          headerRight: () => (
-            <Link href="/Cart" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="shopping-cart"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+     
         }}
       />
       <Tabs.Screen

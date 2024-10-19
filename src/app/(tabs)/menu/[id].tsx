@@ -1,7 +1,9 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, Text, View, Pressable } from 'react-native';
-import product from '../../assets/data/products';
+import product from '../../../../assets/data/products';
+import { useCart } from '@/providers/CartProvider';
+import { PizzaSize } from '@/types';
 
 // Define a type for the product
 type Product = {
@@ -12,12 +14,13 @@ type Product = {
 };
 
 const Products = () => {
-  const sizes = ['S', 'M', 'L', 'XL'];
+  const sizes : PizzaSize[] = ['S', 'M', 'L', 'XL'];
   const params = useLocalSearchParams();
   const router = useRouter(); // Initialize the router
+  const {addItem} = useCart()
   
   // State for selected size
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<PizzaSize | null>(null);
   const products = product.find((p) => p.id.toString() === params.id);
 
   // Handle case where the product is not found
@@ -33,6 +36,7 @@ const Products = () => {
     if (selectedSize) {
       alert(`Added ${products.name} of size ${selectedSize} to cart`);
       // Navigate to the cart page (adjust the route as needed)
+      addItem(products,selectedSize)
       router.push('/Cart'); // Assuming your cart page is located at /cart
     } else {
       alert('Please select a size before adding to cart');
@@ -41,6 +45,7 @@ const Products = () => {
 
   return (
     <ScrollView className='bg-white p-5'>
+       <Stack.Screen  options={{title: 'Details'}}/>
       <Image
         source={{ uri: products.image }}
         className="w-full h-96"

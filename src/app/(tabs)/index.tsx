@@ -1,20 +1,5 @@
-import { Text, View } from "react-native";
-import "../../../global.css"
-import Food from "@/components/Food/Food";
+import { Redirect } from "expo-router";
 
-
-
-export default function TabOneScreen() {
-  return (
-    <View>
-      
-    
-   
-      <Food/>
- 
-
-    </View>
-  );
+export default function TabIndex(){
+    return <Redirect href={'/menu/'}/>
 }
-
-
