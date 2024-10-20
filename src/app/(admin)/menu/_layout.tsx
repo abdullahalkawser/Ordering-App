@@ -20,20 +20,7 @@ export default function Menustack  () {
             </Link>
           ),}}/>
 
-<Stack.Screen name="[id]" options={{ title: 'Menu',headerRight: () => (
-            <Link href="/Cart" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="pencil"
-                    size={25}
-                    color={Colors.light.tint}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),}}/>
+
     </Stack>
     
     

@@ -2,19 +2,14 @@ import Button from '@/components/Button';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Stack, useLocalSearchParams } from 'expo-router';
 const CreateProduct = () => {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState<string | null>(null);
+  const {id} = useLocalSearchParams(); // Get dynamic params
 
-  const handleSubmit = () => {
-    if (!productName || !price) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-    Alert.alert('Product Added', `Name: ${productName}, Price: ${price}`);
-    // Handle form submission logic here
-  };
+  const isUpdating = !!id
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -31,16 +26,66 @@ const CreateProduct = () => {
       setImage(result.assets[0].uri);
     }
   };
+  const ontimeupdate=()=>{
+    if (!productName || !price) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    Alert.alert('Product Added', `Name: ${productName}, Price: ${price}`);
+    // Handle form submission logic here
+
+  }
+  const onCreate=()=>{
+    if (!productName || !price) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    Alert.alert('Product Added', `Name: ${productName}, Price: ${price}`);
+    // Handle form submission logic here
+    
+  }
 
 
 
+const onsubmit= ()=>{
+  if (isUpdating) {
+    ontimeupdate()
+    
+  }
+  else{
+    onCreate()
+  }
+}
 
+const onDelete=()=>{
+  console.warn('Delete')
+
+}
+const confirmDelete = () => {
+  Alert.alert(
+    'Confirm', 
+    'Are you sure you want to delete this?', 
+    [
+      {
+        text: 'Cancel',
+   
+      },
+      { 
+        text: 'Delete', 
+        onPress: onDelete,
+        style: 'destructive', // Optional: for a red button, indicating a destructive action
+      },
+    ],
+    { cancelable: true } // Optional: if you want to allow dismissing by tapping outside the alert
+  );
+};
 
 
   return (
-    <ScrollView >
-      <View className="bg-white min-h-screen p-5">
-      <Text className="text-2xl font-bold mb-4">Add Product</Text>
+<ScrollView>
+      <View className="bg-white min-h-screen p-3">
+        <Stack.Screen options={{title:isUpdating ? "update product" :'create Product'}}/ >
+
       {/* <View  >
         <Image source={{ uri: 'https://media.istockphoto.com/id/645243318/photo/delicious-classic-italian-pizza-pepperoni-with-sausages-and-cheese-mozzarella.jpg?s=612x612&w=0&k=20&c=J3ZWNXmghZu-Wad1anCfplOnW0JoqK1zCD24fMmkt9o=' }} className='w-3/4 h-60 self-center' />
         {image && <Image source={{ uri: image }} className='w-3/4 h-60 self-center'/>}
@@ -92,10 +137,17 @@ const CreateProduct = () => {
         <Text style={{ color: 'white', textAlign: 'center' }}>Add Product</Text>
       </TouchableOpacity> */}
 
-      <Button onPress={handleSubmit} style={{ backgroundColor: 'blue', padding: 15, borderRadius: 8 }} text='Add Product' />
+      <Button onPress={onsubmit} style={{ backgroundColor: 'blue', padding: 15, borderRadius: 8 }}  text={isUpdating ? 'Update Product' : 'Create Product'}  />
+      {isUpdating && (
+
+  <Button onPress={confirmDelete} style={{ backgroundColor: 'red', padding: 15, borderRadius: 8 }} text={'Delete'}>
+   
+  </Button>
+)}
       </View>
+      </ScrollView>
       
-    </ScrollView>
+
   );
 };
 
