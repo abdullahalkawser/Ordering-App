@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, Image } from 'react-native';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import { Link, Stack } from 'expo-router';
@@ -9,6 +9,7 @@ const SignInScreen = () => {
 
   return (
     <View className='flex-1 justify-center p-5 bg-white'>
+      <Image source={{uri:"https://as1.ftcdn.net/v2/jpg/04/27/59/94/1000_F_427599401_mbTarDavJSHMpkg1u0JmmaGhjWnQgOUI.jpg"}} className='w-full h-96'/>
       <Stack.Screen options={{ title: 'Sign in' }} />
 
       <Text className='text-gray-600'>Email</Text>
@@ -31,7 +32,7 @@ const SignInScreen = () => {
       <Button text="Sign in" />
       
       <Link href="/sign-up" asChild>
-        <Text className='self-center font-bold text-blue-500 mt-5'>
+      <Text className='self-center font-bold text-blue-500 mt-5'>
           Create an account
         </Text>
       </Link>
