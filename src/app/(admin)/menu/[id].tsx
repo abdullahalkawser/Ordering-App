@@ -52,28 +52,12 @@ const Products = () => {
         resizeMode="contain"
       />
       <Text className='text-2xl font-bold'>Product: {products.name}</Text>
-      <Text className='text-lg font-bold mt-4'>Select Size</Text>
+    
 
-      <View className='flex-row justify-around mt-3'>
-        {sizes.map((size) => (
-          <Pressable
-            key={size}
-            onPress={() => setSelectedSize(size)} // Set selected size on press
-            className={`rounded-full p-4 items-center justify-center ${
-              selectedSize === size ? 'bg-blue-500' : 'bg-slate-200'
-            }`}
-          >
-            <Text className={`${selectedSize === size ? 'text-white' : 'text-black'}`}>{size}</Text>
-          </Pressable>
-        ))}
-      </View>
+
 
       <Text className='text-lg font-bold mt-5'>Price: ${products.price.toFixed(2)}</Text>
 
-      {/* Add to Cart Button */}
-      <Pressable onPress={addtocart} className='bg-blue-500 mt-6 py-3 rounded-full'>
-        <Text className='text-center text-white text-lg font-semibold'>Add to Cart</Text>
-      </Pressable>
     </ScrollView>
   );
 };

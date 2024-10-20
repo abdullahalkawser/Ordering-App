@@ -6,7 +6,7 @@ import { Pressable } from "react-native";
 export default function Menustack  () {
     return <Stack>
         <Stack.Screen name="index" options={{ title: 'Menu',headerRight: () => (
-            <Link href="/Cart" asChild>
+            <Link href="/(admin)/menu/create" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
