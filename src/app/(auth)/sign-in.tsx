@@ -1,11 +1,29 @@
-import { View, Text, TextInput, Image } from 'react-native';
+import { View, Text, TextInput, Image, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import { Link, Stack } from 'expo-router';
+import { supabase } from '@/lib/supabase';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const signin = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      Alert.alert('Success', 'Login  successfully!');
+    }
+    setLoading(false);
+  };
+
 
   return (
     <View className='flex-1 justify-center p-5 bg-white'>
@@ -29,7 +47,7 @@ const SignInScreen = () => {
         secureTextEntry
       />
 
-      <Button text="Sign in" />
+      <Button   text={loading ? "Loding...." : "Login"} onPress={signin}/>
       
       <Link href="/sign-up" asChild>
       <Text className='self-center font-bold text-blue-500 mt-5'>
