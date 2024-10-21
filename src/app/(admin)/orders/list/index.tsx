@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList } from 'react-native';
-import dataslist from '../../../../assets/data/orders';
+import dataslist from '../../../../../assets/data/orders';
 import OrderListItem from '@/components/order/order';
 import { Order } from '@/types';
 
