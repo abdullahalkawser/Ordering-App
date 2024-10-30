@@ -1,11 +1,12 @@
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, Text, View, Pressable } from 'react-native';
-import product from '../../../../assets/data/products'; // Ensure the path is correct
+
 import { useCart } from '@/providers/CartProvider';
 import { PizzaSize } from '@/types';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
+import { UseProduct } from '@/api/products';
 
 // Define the product type
 type Product = {
@@ -17,16 +18,30 @@ type Product = {
 
 const Products = () => {
   const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // Pizza sizes
-  const {id} = useLocalSearchParams(); // Get dynamic params
+
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+
+
+
+  // Fetch product data using custom hook
+  const { data: product, error, isLoading } = UseProduct(id); 
+  if (isLoading) {
+    return <Text>Loading...</Text>; // Display loading state
+  }
+
+  if (error instanceof Error) {
+    return <Text>Error: {error.message}</Text>; // Display error state
+  }
+
   const router = useRouter(); // Router for navigation
   const { addItem } = useCart(); // Cart context
   const [selectedSize, setSelectedSize] = useState<PizzaSize | null>(null); // Size state
 
-  // Find the product based on the id in the URL params
-  const products = product.find((p) => p.id.toString() === id);
+
 
   // If no product is found, render an error message
-  if (!products) {
+  if (!product) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text className="text-lg">Product not found</Text>
@@ -37,9 +52,9 @@ const Products = () => {
   // Function to handle adding product to the cart
   const addtocart = () => {
     if (selectedSize) {
-      alert(`Added ${products.name} of size ${selectedSize} to cart`);
+      alert(`Added ${product.name} of size ${selectedSize} to cart`);
       // Add the item to the cart
-      addItem(products, selectedSize);
+      addItem(product, selectedSize);
       // Navigate to the Cart page
       router.push('/Cart');
     } else {
@@ -73,16 +88,16 @@ const Products = () => {
       
       {/* Product Image */}
       <Image
-        source={{ uri: products.image }}
+        source={{ uri: product.image }}
         className="w-full h-96"
         resizeMode="contain"
       />
       
       {/* Product Name */}
-      <Text className="text-2xl font-bold">Product: {products.name}</Text>
+      <Text className="text-2xl font-bold">Product: {product.name}</Text>
 
       {/* Product Price */}
-      <Text className="text-lg font-bold mt-5">Price: ${products.price.toFixed(2)}</Text>
+      <Text className="text-lg font-bold mt-5">Price: ${product.price.toFixed(2)}</Text>
       
       {/* Size Selection (You can add size buttons here) */}
       <Text className="text-lg font-bold mt-5">Select Size:</Text>
