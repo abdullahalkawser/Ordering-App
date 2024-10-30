@@ -5,10 +5,11 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/components/useColorScheme';
 import { CartProvider } from '@/providers/CartProvider';
-import { AuthProvider } from '@/providers/AuthProvider';
+import AuthProvider from '@/providers/AuthProvider';
+import QueryProvider from '@/providers/QueryProvider';
+
 
 
 
@@ -56,7 +57,12 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-<AuthProvider>
+        <AuthProvider>
+        <QueryProvider>
+
+
+    
+
       <CartProvider>
       <Stack>
         <Stack.Screen name="(admin)" options={{ headerShown: false }} />
@@ -66,7 +72,9 @@ function RootLayoutNav() {
         {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
       </Stack>
       </CartProvider>
+      </QueryProvider>
       </AuthProvider>
+
 
 
     </ThemeProvider>

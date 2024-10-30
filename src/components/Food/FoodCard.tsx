@@ -9,19 +9,19 @@ type Product = {
 };
 
 export default function FoodCard({ item }: { item: Product }) {
-  const segument = useSegments()
-  // console.log(segument)
+  const segments = useSegments();
+  
   return (
-    <Link href={`/${segument[0]}/menu/${item.id}`} asChild>
-    <Pressable className="flex-1 p-4 bg-slate-50 rounded-2xl shadow-xl w-1/2">
-      <Image
-        source={{ uri: item.image }}
-        style={{ width: 100, height: 100 }} 
-        className="mt-2 w-full"
-        resizeMode="contain"
-      />
-      <Text className="text-lg font-bold">{item.name}</Text>
-      <Text className="text-gray-500">${item.price}</Text>
-    </Pressable></Link>
+    <Link href={`/${segments[0]}/menu/${item.id}`} asChild>
+      <Pressable className="flex-1 p-4 bg-red-500 rounded-2xl shadow-xl w-1/2">
+        <Image
+          source={{ uri: item.image }}
+          style={{ width: "100%", height: 100, marginTop: 8 }}
+          resizeMode="contain"
+        />
+        <Text className="text-lg font-bold">{item.name}</Text>
+        <Text className="text-gray-500">${item.price}</Text>
+      </Pressable>
+    </Link>
   );
 }

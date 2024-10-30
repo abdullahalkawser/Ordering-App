@@ -8,6 +8,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/providers/AuthProvider';
 
+
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -18,16 +19,14 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const {idAdmin} = useAuth();
+  const { isAdmin } = useAuth();
 
 
-
-
-  if (!idAdmin) {
-    return (
-<Redirect  href={'/'}/>
-    );
+  if (!isAdmin) {
+    return <Redirect href={'/'} />;
   }
+  
+
 
   return (
     <Tabs

@@ -1,95 +1,66 @@
-import { supabase } from "@/lib/supabase";
-import { Session } from "@supabase/supabase-js";
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { supabase } from '@/lib/supabase';
+import { Session } from '@supabase/supabase-js';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
-// Define the type for the Profile and AuthContext
-type ProfileType = {
-    id: string;
-    username: string;
-    email: string;
-    group: string;
+type AuthData = {
+  session: Session | null;
+  profile: any;
+  loading: boolean;
+  isAdmin: boolean;
 };
 
-type AuthType = {
-    session: Session | null;
-    loading: boolean;
-    profile: ProfileType | null;
-    idAdmin: boolean;
-};
-
-// Create the AuthContext with a default value
-const AuthContext = createContext<AuthType>({
-    session: null,
-    loading: true,
-    profile: null,
-    idAdmin: false
+const AuthContext = createContext<AuthData>({
+  session: null,
+  loading: true,
+  profile: null,
+  isAdmin: false,
 });
 
-// AuthProvider component
-export const AuthProvider = ({ children }: PropsWithChildren) => {
-    const [session, setSession] = useState<Session | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [profile, setProfile] = useState<ProfileType | null>(null);
+export default function AuthProvider({ children }: PropsWithChildren) {
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchSession = async () => {
-            const { data, error } = await supabase.auth.getSession();
+  useEffect(() => {
+    const fetchSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-            if (error) {
-                console.error("Error fetching session:", error.message);
-            } else {
-                if (data.session) {
-                    // Fetch profile
-                    const { data: profileData, error: profileError } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', data.session.user.id)
-                        .single();
+      setSession(session);
 
-                    if (profileError) {
-                        console.error("Error fetching profile:", profileError.message);
-                    } else {
-                        setProfile(profileData || null);
-                    }
-                }
-                setSession(data.session); // Update state with fetched session
-            }
-            setLoading(false); // Set loading to false after fetching
-        };
+      if (session) {
+        // fetch profile
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        setProfile(data || null);
+      }
 
-        fetchSession(); // Call the async function
+      setLoading(false);
+    };
 
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-        });
+    fetchSession();
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
-        // Cleanup subscription on unmount
-        return () => {
-            subscription?.unsubscribe();
-        };
-    }, []);
+  return (
+    <AuthContext.Provider
+      value={{ session, loading, profile, isAdmin: profile?.group === 'ADMIN' }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
 
-    return (
-        <AuthContext.Provider
-            value={{
-                loading,
-                session,
-                profile, 
-                idAdmin: profile?.group === 'ADMIN' || false, // Ensure idAdmin defaults to false
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
-};
-
-// Custom hook to use the AuthContext
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-};
+export const useAuth = () => useContext(AuthContext);

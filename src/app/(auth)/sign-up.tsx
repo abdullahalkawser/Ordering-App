@@ -1,59 +1,81 @@
-import { View, Text, TextInput, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
+import Colors from '../../constants/Colors';
 import { Link, Stack } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { Alert } from 'react-native';
 
 
-const Signupcreen = () => {
+const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const signUpWithEmail = async () => {
+  async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
 
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
-      Alert.alert('Success', 'Account created successfully!');
-    }
+    if (error) Alert.alert(error.message);
     setLoading(false);
-  };
+  }
 
   return (
-    <View className='flex-1 justify-center p-5 bg-white'>
-           <Image source={{uri:"https://as1.ftcdn.net/v2/jpg/04/27/59/94/1000_F_427599401_mbTarDavJSHMpkg1u0JmmaGhjWnQgOUI.jpg"}} className='w-full h-96'/>
+    <View style={styles.container}>
       <Stack.Screen options={{ title: 'Sign up' }} />
 
-      <Text  className='text-gray-600'>Email</Text>
+      <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
         onChangeText={setEmail}
         placeholder="jon@gmail.com"
-       className='border border-gray-300 p-2 mt-1 mb-5 bg-white rounded'
+        style={styles.input}
       />
 
-      <Text className='text-gray-600'>Password</Text>
+      <Text style={styles.label}>Password</Text>
       <TextInput
         value={password}
         onChangeText={setPassword}
         placeholder=""
-        className='border border-gray-300 p-2 mt-1 mb-5 bg-white rounded'
+        style={styles.input}
         secureTextEntry
       />
 
-      <Button text={loading ? "Account is creating..." : "Create Account"}   onPress={signUpWithEmail} disabled={loading}    />
-      <Link href={"/sign-in" } className='self-center font-bold text-blue-500 mt-5'>
-      Sign in
+      <Button
+        onPress={signUpWithEmail}
+        disabled={loading}
+        text={loading ? 'Creating account...' : 'Create account'}
+      />
+      <Link href="/sign-in" style={styles.textButton}>
+        Sign in
       </Link>
     </View>
   );
 };
 
-export default Signupcreen;
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    justifyContent: 'center',
+    flex: 1,
+  },
+  label: {
+    color: 'gray',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    marginTop: 5,
+    marginBottom: 20,
+    backgroundColor: 'white',
+    borderRadius: 5,
+  },
+  textButton: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    color: Colors.light.tint,
+    marginVertical: 10,
+  },
+});
+
+export default SignUpScreen;
