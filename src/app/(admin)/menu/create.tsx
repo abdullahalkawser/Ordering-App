@@ -1,19 +1,36 @@
 import Button from '@/components/Button';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { insertData } from '@/api/products';
+import { insertData, UpdateData, UseProduct } from '@/api/products';
 
 const CreateProduct = () => {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState<string | null>(null);
-  const {id} = useLocalSearchParams(); // Get dynamic params
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString?.[0]);
 
   const isUpdating = !!id
 
   const {mutate:newData}= insertData()
+  const {mutate:updatedProduct}= UpdateData()
+  const {data:updatedata}= UseProduct(id)
+
+
+
+  useEffect(()=>{
+
+
+    if (updatedata) {
+      setProductName(updatedata.name)
+      setPrice(updatedata.price.toString())
+      setImage(updatedata.image)
+      
+    }
+
+  },[updatedata])
 
   const router = useRouter()
 
@@ -39,6 +56,13 @@ const CreateProduct = () => {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
+
+    updatedProduct({ id,name:productName,price: parseFloat(price),image}, {
+      onSuccess:()=>{
+        router.back()
+        
+      }
+    })
     Alert.alert('Product Added', `Name: ${productName}, Price: ${price}`);
     // Handle form submission logic here
 
