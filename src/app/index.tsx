@@ -8,7 +8,7 @@ import { useAuth } from '@/providers/AuthProvider';
 
 
 const index = () => {
-  const { session, loading,isAdmin } = useAuth();
+  const { session, loading } = useAuth();
 
   if (loading) {
     return <ActivityIndicator />;
@@ -18,9 +18,9 @@ const index = () => {
     return <Redirect href={'/sign-in'} />;
   }
 
-  if (!isAdmin) {
-    return <Redirect href={'/(user)'} />;
-  }
+  // if (!isAdmin) {
+  //   return <Redirect href={'/(user)'} />;
+  // }
   
 
   return (

@@ -17,28 +17,24 @@ type Product = {
 };
 
 const Products = () => {
-  const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']; // Pizza sizes
-
+  const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
   const { id: idString } = useLocalSearchParams();
   const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
+  const router = useRouter();
+  const { addItem } = useCart();
+  const [selectedSize, setSelectedSize] = useState<PizzaSize | null>(null);
 
+  const { data: product, error, isLoading } = UseProduct(id);
 
-  // Fetch product data using custom hook
-  const { data: product, error, isLoading } = UseProduct(id); 
+  // Render loading or error states as needed
   if (isLoading) {
-    return <Text>Loading...</Text>; // Display loading state
+    return <Text>Loading...</Text>;
   }
 
   if (error instanceof Error) {
-    return <Text>Error: {error.message}</Text>; // Display error state
+    return <Text>Error: {error.message}</Text>;
   }
-
-  const router = useRouter(); // Router for navigation
-  const { addItem } = useCart(); // Cart context
-  const [selectedSize, setSelectedSize] = useState<PizzaSize | null>(null); // Size state
-
-
 
   // If no product is found, render an error message
   if (!product) {
@@ -50,12 +46,10 @@ const Products = () => {
   }
 
   // Function to handle adding product to the cart
-  const addtocart = () => {
+  const addToCart = () => {
     if (selectedSize) {
       alert(`Added ${product.name} of size ${selectedSize} to cart`);
-      // Add the item to the cart
       addItem(product, selectedSize);
-      // Navigate to the Cart page
       router.push('/Cart');
     } else {
       alert('Please select a size before adding to cart');
@@ -66,7 +60,6 @@ const Products = () => {
     <ScrollView className="bg-white p-5">
       <Stack.Screen options={{ title: 'Details' }} />
       <Stack.Screen
-  
         options={{
           title: 'Menu',
           headerRight: () => (
@@ -85,21 +78,17 @@ const Products = () => {
           ),
         }}
       />
-      
+
       {/* Product Image */}
-      <Image
-        source={{ uri: product.image }}
-        className="w-full h-96"
-        resizeMode="contain"
-      />
-      
+      <Image source={{ uri: product.image }} className="w-full h-96" resizeMode="contain" />
+
       {/* Product Name */}
-      <Text className="text-2xl font-bold">Product: {product.name}</Text>
+      <Text className="text-2xl font-bold mt-4">Product: {product.name}</Text>
 
       {/* Product Price */}
       <Text className="text-lg font-bold mt-5">Price: ${product.price.toFixed(2)}</Text>
-      
-      {/* Size Selection (You can add size buttons here) */}
+
+      {/* Size Selection */}
       <Text className="text-lg font-bold mt-5">Select Size:</Text>
       <View className="flex-row space-x-4 mt-3">
         {sizes.map((size) => (
@@ -115,6 +104,10 @@ const Products = () => {
         ))}
       </View>
 
+      {/* Add to Cart Button */}
+      <Pressable onPress={addToCart} className="mt-8 px-4 py-2 bg-green-500 rounded-lg">
+        <Text className="text-white text-center">Add to Cart</Text>
+      </Pressable>
     </ScrollView>
   );
 };
