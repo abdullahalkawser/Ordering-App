@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Alert, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { insertData, UpdateData, UseProduct } from '@/api/products';
+import { DeleteData, insertData, UpdateData, UseProduct } from '@/api/products';
 
 const CreateProduct = () => {
   const [productName, setProductName] = useState('');
@@ -17,6 +17,7 @@ const CreateProduct = () => {
   const {mutate:newData}= insertData()
   const {mutate:updatedProduct}= UpdateData()
   const {data:updatedata}= UseProduct(id)
+  const {mutate:deletsdata}= DeleteData()
 
 
 
@@ -77,6 +78,7 @@ const CreateProduct = () => {
 newData({name:productName,price: parseFloat(price),image}, {
   onSuccess:()=>{
     router.back()
+
     
   }
 })
@@ -101,7 +103,12 @@ const onsubmit= ()=>{
 }
 
 const onDelete=()=>{
-  console.warn('Delete')
+  deletsdata(id, {
+    onSuccess:()=>{
+      router.replace('/(admin)')
+      
+    }
+  })
 
 }
 const confirmDelete = () => {

@@ -82,3 +82,22 @@ export const UpdateData = () => {
   });
 };
 
+
+// delete data 
+
+export const DeleteData = () => {
+
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: number) => {
+
+      await supabase.from('products').delete().eq('id',id)
+
+    },
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
