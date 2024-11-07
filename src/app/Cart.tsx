@@ -6,7 +6,7 @@ import { FlatList,Platform, Text, View } from 'react-native'
 
 const Cart = () => {
   const { items, total } = useCart();
-  console.log(items)
+
 
   return (
     <View className='bg-white h-screen'>

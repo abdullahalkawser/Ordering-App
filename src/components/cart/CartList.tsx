@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { CartItem } from '@/types';
 import { useCart } from '@/providers/CartProvider';
 import Colors from '@/constants/Colors';
+import Button from '../Button';
 
 
 type CartListItemProps = {
@@ -14,7 +15,8 @@ type CartListItemProps = {
 };
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
-  const {  updateQuantity} = useCart();
+  const {  updateQuantity,checkout} = useCart();
+
   return (
     <View style={styles.container}>
       <Image
@@ -44,6 +46,10 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
           color="gray"
           style={{ padding: 5 }}
         />
+      </View>
+
+      <View >
+      <Button onPress={checkout} text='cheakout'/>
       </View>
     </View>
   );

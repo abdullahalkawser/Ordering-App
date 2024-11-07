@@ -1,3 +1,4 @@
+import { Useorderdetails } from '@/api/orders'
 import OrderListItem from '@/components/order/order'
 import OrderItemListItem from '@/components/order/OrderItemListItem'
 import Colors from '@/constants/Colors'
@@ -10,8 +11,9 @@ import { FlatList, Pressable } from 'react-native'
 import { View,Text } from 'react-native'
 
 const OrderDetails = () => {
-    const {id}= useLocalSearchParams()
-    const order = orders.find((o) => o.id.toString() === id);
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+    const {data: order}= Useorderdetails(id)
 
     if (!order) {
       return <Text>Order not found!</Text>;

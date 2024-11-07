@@ -1,6 +1,7 @@
 import { CartItem, Product } from '@/types';
 import React, { createContext, useState, useContext, PropsWithChildren } from 'react';
 import { randomUUID } from 'expo-crypto';
+import {  useInsertOrder } from '@/api/orders';
 
 // Define the type for the CartContext
 type CartType = {
@@ -8,6 +9,7 @@ type CartType = {
   addItem: (product: Product, size: CartItem['size']) => void;
   updateQuantity: (itemid: string, amount: -1 | 1) => void;
   total: number;
+  checkout: () => void; // Fixed property spelling
 };
 
 // Default value for the context
@@ -16,6 +18,7 @@ const CartContext = createContext<CartType>({
   addItem: () => {},
   updateQuantity: () => {},
   total: 0,
+  checkout: () => {}, // Updated to match the type
 });
 
 // Create the CartProvider component
@@ -67,7 +70,21 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     (sum, item) => (sum += item.product.price * item.quantity),
     0
   );
+  const { mutate: insertOrder } = useInsertOrder();
 
+  const checkout = () => {
+    insertOrder(
+      { total },
+      {
+        onSuccess: (data) => {
+          console.log('Order inserted successfully:', data);
+        },
+        onError: (error) => {
+          console.error('Error inserting order:', error);
+        },
+      }
+    );
+  };
   return (
     <CartContext.Provider
       value={{
@@ -75,6 +92,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
         addItem: addItemToCart,
         updateQuantity,
         total, // Include the total in the context value
+        checkout, // Updated spelling
       }}
     >
       {children}
@@ -85,4 +103,5 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 // Custom hook to use the CartContext
 export const useCart = () => {
   return useContext(CartContext);
+
 };
