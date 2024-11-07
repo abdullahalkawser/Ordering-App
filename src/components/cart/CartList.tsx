@@ -1,13 +1,10 @@
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
-
-import { Link } from 'expo-router';
 
 import { FontAwesome } from '@expo/vector-icons';
 import { CartItem } from '@/types';
 import { useCart } from '@/providers/CartProvider';
 import Colors from '@/constants/Colors';
-import Button from '../Button';
 
 
 type CartListItemProps = {
@@ -15,12 +12,14 @@ type CartListItemProps = {
 };
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
-  const {  updateQuantity,checkout} = useCart();
+  const { updateQuantity,  } = useCart();
 
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: cartItem.product.image || 'not' }}
+        source={{
+          uri: cartItem.product.image || 'https://via.placeholder.com/75', // Placeholder for missing image
+        }}
         style={styles.image}
         resizeMode="contain"
       />
@@ -36,21 +35,17 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
           onPress={() => updateQuantity(cartItem.id, -1)}
           name="minus"
           color="gray"
-          style={{ padding: 5 }}
+          style={styles.icon}
         />
-
         <Text style={styles.quantity}>{cartItem.quantity}</Text>
         <FontAwesome
           onPress={() => updateQuantity(cartItem.id, 1)}
           name="plus"
           color="gray"
-          style={{ padding: 5 }}
+          style={styles.icon}
         />
       </View>
-
-      <View >
-      <Button onPress={checkout} text='cheakout'/>
-      </View>
+    
     </View>
   );
 };
@@ -59,15 +54,16 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 5,
-    flex: 1,
+    padding: 10,
+    marginVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
   },
   image: {
     width: 75,
-    aspectRatio: 1,
-    alignSelf: 'center',
+    height: 75,
+    borderRadius: 8,
     marginRight: 10,
   },
   title: {
@@ -78,12 +74,15 @@ const styles = StyleSheet.create({
   subtitleContainer: {
     flexDirection: 'row',
     gap: 5,
+    alignItems: 'center',
   },
   quantitySelector: {
     flexDirection: 'row',
-    gap: 10,
     alignItems: 'center',
-    marginVertical: 10,
+    gap: 10,
+  },
+  icon: {
+    padding: 5,
   },
   quantity: {
     fontWeight: '500',
@@ -92,6 +91,9 @@ const styles = StyleSheet.create({
   price: {
     color: Colors.light.tint,
     fontWeight: 'bold',
+  },
+  checkoutButton: {
+    marginLeft: 10,
   },
 });
 

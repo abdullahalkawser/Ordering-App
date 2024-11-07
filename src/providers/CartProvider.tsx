@@ -77,7 +77,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
       { total },
       {
         onSuccess: (data) => {
-          console.log('Order inserted successfully:', data);
+          console.warn('Order inserted successfully:', data);
         },
         onError: (error) => {
           console.error('Error inserting order:', error);

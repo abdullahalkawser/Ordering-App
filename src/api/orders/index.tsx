@@ -5,9 +5,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const UseadminorderList = ({archived=false})=>{
   const statusses = archived ? ['Delivered'] : ['New','Cooking','Delivering']
     return  useQuery({
-        queryKey: ['order',{archived}],
+        queryKey: ['orders',{archived}],
         queryFn: async () => {
-          const { data, error } = await supabase.from("order").select("*").in('status',statusses);
+          const { data, error } = await supabase.from("orders").select("*").in('status',statusses);
           if (error) throw new Error(error.message);
           return data;
         },
@@ -21,11 +21,11 @@ export const useMyOrderList = () => {
   const id = session?.user.id;
 
   return useQuery({
-    queryKey: ['order', { userId: id }],
+    queryKey: ['orders', { userId: id }],
     queryFn: async () => {
       if (!id) return null;
       const { data, error } = await supabase
-        .from('order')
+        .from('orders')
         .select('*')
         .eq('user_id', id)
         // .order('created_at', { ascending: false });
@@ -44,9 +44,9 @@ export const useMyOrderList = () => {
 export const Useorderdetails = (id: number)=>{
 
   return  useQuery({
-      queryKey: ['order',id],
+      queryKey: ['orders',id],
       queryFn: async () => {
-        const { data, error } = await supabase.from("order").select("*").eq('id',id).single();
+        const { data, error } = await supabase.from("orders").select("*").eq('id',id).single();
         if (error) throw new Error(error.message);
         return data;
       },
@@ -65,7 +65,7 @@ export const useInsertOrder = () => {
   return useMutation({
     async mutationFn(data: any) {
       const { error, data: newProduct } = await supabase
-        .from('order')
+        .from('orders')
         .insert({ ...data, user_id: userId })
         .select()
 
@@ -77,7 +77,7 @@ export const useInsertOrder = () => {
       return newProduct;
     },
     async onSuccess() {
-      await queryClient.invalidateQueries({ queryKey: ['order'] });
+      await queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
 };
