@@ -1,25 +1,27 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
-
 import { FontAwesome } from '@expo/vector-icons';
 import { CartItem } from '@/types';
 import { useCart } from '@/providers/CartProvider';
 import Colors from '@/constants/Colors';
-
+import RemoteImage from '../RemoteImage';
 
 type CartListItemProps = {
   cartItem: CartItem;
 };
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
-  const { updateQuantity,  } = useCart();
+  const { updateQuantity } = useCart();
+
+  if (!cartItem || !cartItem.product) {
+    return <Text>Loading...</Text>; // In case cartItem or product is undefined
+  }
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: cartItem.product.image || 'https://via.placeholder.com/75', // Placeholder for missing image
-        }}
+      <RemoteImage
+        path={cartItem.product.image}
+        fallback="https://images.unsplash.com/photo-1637438333468-2ea466032288?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D"
         style={styles.image}
         resizeMode="contain"
       />
@@ -45,7 +47,6 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
           style={styles.icon}
         />
       </View>
-    
     </View>
   );
 };

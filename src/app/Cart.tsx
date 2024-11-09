@@ -10,7 +10,7 @@ const Cart = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Cart</Text>
+      <Text style={styles.title}> Your Order is pending</Text>
       <Text style={styles.totalText}>
         Total: ${total.toFixed(2)}
       </Text>
