@@ -7,6 +7,7 @@ import { PizzaSize } from '@/types';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { UseProduct } from '@/api/products';
+import RemoteImage from '@/components/RemoteImage';
 
 // Define the product type
 type Product = {
@@ -80,7 +81,12 @@ const Products = () => {
       />
 
       {/* Product Image */}
-      <Image source={{ uri: product.image }} className="w-full h-96" resizeMode="contain" />
+      <RemoteImage
+         path={product.image}
+         fallback="https://images.unsplash.com/photo-1637438333468-2ea466032288?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D"
+          style={{ width: "100%", height: 100, marginTop: 8 }}
+          resizeMode="contain"
+        />
 
       {/* Product Name */}
       <Text className="text-2xl font-bold mt-4">Product: {product.name}</Text>

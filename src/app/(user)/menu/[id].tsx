@@ -4,6 +4,7 @@ import { Image, ScrollView, Text, View, Pressable } from 'react-native';
 import { useCart } from '@/providers/CartProvider';
 import { PizzaSize } from '@/types';
 import { UseProduct } from '@/api/products';
+import RemoteImage from '@/components/RemoteImage';
 
 
 const Products = () => {
@@ -50,11 +51,12 @@ const Products = () => {
   return (
     <ScrollView className="bg-white p-5">
       <Stack.Screen options={{ title: 'Details' }} />
-      <Image
-        source={{ uri: product.image }}
-        className="w-full h-96"
-        resizeMode="contain"
-      />
+      <RemoteImage
+         path={product.image}
+         fallback="https://images.unsplash.com/photo-1637438333468-2ea466032288?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D"
+          style={{ width: "100%", height: 100, marginTop: 8 }}
+          resizeMode="contain"
+        />
       <Text className="text-2xl font-bold">Product: {product.name}</Text>
       <Text className="text-lg font-bold mt-4">Select Size</Text>
 

@@ -4,6 +4,12 @@ import { View, Text, TextInput, Alert, TouchableOpacity, Image, ScrollView } fro
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { DeleteData, insertData, UpdateData, UseProduct } from '@/api/products';
+import { randomUUID } from 'expo-crypto';
+import { supabase } from '@/lib/supabase';
+import { decode } from 'base64-arraybuffer';
+import * as FileSystem from 'expo-file-system';
+import RemoteImage from '@/components/RemoteImage';
+
 
 const CreateProduct = () => {
   const [productName, setProductName] = useState('');
@@ -68,14 +74,15 @@ const CreateProduct = () => {
     // Handle form submission logic here
 
   }
-  const onCreate=()=>{
+  const onCreate= async()=>{
     if (!productName || !price) {
       Alert.alert('Error', 'Please fill in all fields');
 
 
       return;
     }
-newData({name:productName,price: parseFloat(price),image}, {
+    const imagepath = await uploadImage()
+newData({name:productName,price: parseFloat(price),image:imagepath}, {
   onSuccess:()=>{
     router.back()
 
@@ -130,6 +137,25 @@ const confirmDelete = () => {
   );
 };
 
+const uploadImage = async () => {
+  if (!image?.startsWith('file://')) {
+    return;
+  }
+
+  const base64 = await FileSystem.readAsStringAsync(image, {
+    encoding: 'base64',
+  });
+  const filePath = `${randomUUID()}.png`;
+  const contentType = 'image/png';
+  const { data, error } = await supabase.storage
+    .from('product-image')
+    .upload(filePath, decode(base64), { contentType });
+
+  if (data) {
+    return data.path;
+  }
+};
+
 
   return (
 <ScrollView>
@@ -144,12 +170,12 @@ const confirmDelete = () => {
       </View> */}
        {/* Image section */}
        <View>
-          {/* Display a default or selected image */}
-          <Image
-            source={{ uri: image || 'https://media.istockphoto.com/id/645243318/photo/delicious-classic-italian-pizza-pepperoni-with-sausages-and-cheese-mozzarella.jpg?s=612x612&w=0&k=20&c=J3ZWNXmghZu-Wad1anCfplOnW0JoqK1zCD24fMmkt9o=' }}
-            className="w-2/3 h-60 self-center rounded-xl"
+       <RemoteImage
+            path={image}
+            fallback="https://images.unsplash.com/photo-1637438333468-2ea466032288?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D"
+            style={{ width: '100%', height: 100, marginTop: 8 }}
+            resizeMode="contain"
           />
-          
           {/* Button to pick image */}
           <Text className="text-center font-bold text-2xl mt-2" onPress={pickImage}>
             Select Image

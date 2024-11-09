@@ -1,7 +1,10 @@
-import { CartItem, Product } from '@/types';
-import React, { createContext, useState, useContext, PropsWithChildren } from 'react';
-import { randomUUID } from 'expo-crypto';
-import {  useInsertOrder } from '@/api/orders';
+import { supabase } from "@/lib/supabase";
+import { CartItem, Product, OrderItem, PizzaSize } from "@/types";
+import React, { createContext, useState, useContext, PropsWithChildren } from "react";
+import { randomUUID } from "expo-crypto";
+import { useInsertOrder } from "@/api/orders";
+import { useInsertOrderitem } from "@/api/order-items";
+import { router } from "expo-router";
 
 // Define the type for the CartContext
 type CartType = {
@@ -9,7 +12,7 @@ type CartType = {
   addItem: (product: Product, size: CartItem['size']) => void;
   updateQuantity: (itemid: string, amount: -1 | 1) => void;
   total: number;
-  checkout: () => void; // Fixed property spelling
+  checkout: () => void;
 };
 
 // Default value for the context
@@ -18,25 +21,22 @@ const CartContext = createContext<CartType>({
   addItem: () => {},
   updateQuantity: () => {},
   total: 0,
-  checkout: () => {}, // Updated to match the type
+  checkout: () => {},
 });
 
 // Create the CartProvider component
 export const CartProvider = ({ children }: PropsWithChildren) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Function to add an item to the cart
+  // Function to add items to the cart
   const addItemToCart = (product: Product, size: CartItem['size']) => {
-    // Check if the item already exists in the cart
     const existingItem = cartItems.find(
       (item) => item.product_id === product.id && item.size === size
     );
 
     if (existingItem) {
-      // If item exists, increment its quantity
       updateQuantity(existingItem.id, 1);
     } else {
-      // If item doesn't exist, create a new item
       const newItem: CartItem = {
         id: randomUUID(),
         product,
@@ -50,49 +50,57 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 
   // Function to update the quantity of an item in the cart
   const updateQuantity = (itemid: string, amount: -1 | 1) => {
-    setCartItems((prevItems) => {
-      return prevItems
+    setCartItems((prevItems) =>
+      prevItems
         .map((item) => {
           if (item.id === itemid) {
             const newQuantity = item.quantity + amount;
-            // Remove the item if quantity is less than 1
-            if (newQuantity < 1) return null;
+            if (newQuantity < 1) return null; // Don't allow quantity to be less than 1
             return { ...item, quantity: newQuantity };
           }
           return item;
         })
-        .filter((item) => item !== null); // Filter out items marked for removal
-    });
+        .filter((item) => item !== null) as CartItem[] // Remove null items
+    );
   };
 
-  // Calculate the total price of the items in the cart
+
+
+  // Total cost calculation
   const total = cartItems.reduce(
-    (sum, item) => (sum += item.product.price * item.quantity),
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
-  const { mutate: insertOrder } = useInsertOrder();
+
+  // Mutations for inserting orders and order items
+  const { mutate: insertOrder,} = useInsertOrder();
+
 
   const checkout = () => {
     insertOrder(
       { total },
       {
         onSuccess: (data) => {
-          console.warn('Order inserted successfully:', data);
+          // Assuming `orderResponse` contains the order data or a success message
+          console.log("Order successfully inserted:", data);
+          setCartItems([]);
         },
         onError: (error) => {
-          console.error('Error inserting order:', error);
+          console.error("Error inserting order:", error);
         },
       }
     );
   };
+  
+  
   return (
     <CartContext.Provider
       value={{
         items: cartItems,
         addItem: addItemToCart,
         updateQuantity,
-        total, // Include the total in the context value
-        checkout, // Updated spelling
+        total,
+        checkout,
       }}
     >
       {children}
@@ -103,5 +111,4 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 // Custom hook to use the CartContext
 export const useCart = () => {
   return useContext(CartContext);
-
 };
